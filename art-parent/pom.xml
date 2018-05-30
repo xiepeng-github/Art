@@ -43,6 +43,7 @@
 	
 	<modules>
 		<module>art-websocket</module>
+		<module>art-exception</module>
 	</modules>
 
 
