@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>hello WebSocket</title>
+</head>
+<body>
+	欢迎<br/>
+	<input id="text" type="text"/>
+	<button onclick="sendMsg()">Send</button><hr/>
+	<button onclick="closeWebSocket()">Close</button><hr/>
+	<div id="message"/>
+</body>
+<script type="text/javascript">
+	try {
+		//接受websocket指令
+		var websocket = null;
+		
+		if('WebSocket' in window) {
+			websocket = new WebSocket('ws://localhost:8081/websocket')
+		}else {
+			alert('当前浏览器不支持WebSocket');
+		}
+		
+        //打开事件  
+        websocket.onopen = function(event) {  
+        	setMessageInnerHTML('open');  
+        }
+        
+        //获得消息事件  
+        websocket.onmessage = function(event) {  
+        	setMessageInnerHTML(event.data); 
+        }
+        
+        //关闭事件  
+        websocket.onclose = function() {  
+        	setMessageInnerHTML('close');  
+        } 
+        
+        //发生了错误事件  
+        websocket.onerror = function() {  
+        	setMessageInnerHTML('error');  
+        }
+        
+        websocket.onbeforeunload = function() {
+        	websocket.close();
+        } 
+		      
+		
+	} catch (e) {
+		alert(e);
+	}
+	
+	function setMessageInnerHTML(innerHTML) {
+		document.getElementById('message').innerHTML += innerHTML + '<br/>';
+	}
+	
+	function closeWebSocket() {
+		websocket.close();
+	}
+	
+	function sendMsg() {
+		var message = document.getElementById('text').value;
+		websocket.send(message);
+	}
+	
+</script>
+</html>
