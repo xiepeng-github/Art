@@ -1,4 +1,4 @@
-package com.xp.art.log;
+package com.xp.art.logback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,8 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
-        logger.info("Hello World Again!");
+        for(int i=0; i<150000; i++) {
+        	logger.info(i + ": Hello World Again!");
+        }
     }
 }

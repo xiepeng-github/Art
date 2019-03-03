@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 设置log4j2的自身log级别为warn -->
+<!-- OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<Configuration status="WARN">
+
+  <Properties>
+	<Property name="APP_NAME">artLog_log4j2</Property>
+    <property name="LOG_PATH" value="C:\\logs\\art_logs\\log4j2Test"/>  
+  </Properties>
+  
+  <Appenders>
+  	<!-- 将使用 System.out 或 System.err输出到控制台-->
+  	<!-- name：Appender的名字 -->
+  	<!-- target：SYSTEM_OUT 或 SYSTEM_ERR，默认是SYSTEM_OUT -->
+  	<!-- layout：如何格式化，如果没有默认是%m%n -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    
+    <RollingFile name="RollingFileInfo" fileName="${LOG_PATH}/info.log"
+                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+        <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->        
+        <Filters>
+            <ThresholdFilter level="INFO"/>
+            <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+        </Filters>
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+        </Policies>
+    </RollingFile>
+
+    <RollingFile name="RollingFileWarn" fileName="${LOG_PATH}/warn.log"
+                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log">
+        <Filters>
+            <ThresholdFilter level="WARN"/>
+            <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+        </Filters>
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+        </Policies>
+    </RollingFile>
+
+    <RollingFile name="RollingFileError" fileName="${LOG_PATH}/error.log"
+                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+        <ThresholdFilter level="ERROR"/>
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+        </Policies>
+    </RollingFile> 
+    
+    <RollingFile name="FooLog" fileName="${LOG_PATH}/foo.log"
+                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/foo-%d{yyyy-MM-dd}-%i.log">
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+        </Policies>
+    </RollingFile>
+    
+    <!-- RollingFile节点用来定义超过指定大小自动删除旧的创建新的的Appender -->
+    <!-- name:指定Appender的名字 -->
+    <!-- fileName:指定输出日志的目的文件带全路径的文件名 -->
+    <!-- PatternLayout:输出格式，不设置默认为:%m%n -->
+    <!-- filePattern:指定新建日志文件的名称格式 -->
+    <!-- Policies:指定滚动日志的策略，就是什么时候进行新建日志文件输出日志 -->
+    <!-- TimeBasedTriggeringPolicy:Policies子节点，基于时间的滚动策略，interval属性用来指定多久滚动一次，默认是1 hour。modulate=true用来调整时间：比如现在是早上3am，interval是4，那么第一次滚动是在4am，接着是8am，12am...而不是7am -->
+    <!-- SizeBasedTriggeringPolicy:Policies子节点，基于指定文件大小的滚动策略，size属性用来定义每个日志文件的大小 -->
+    <!-- DefaultRolloverStrategy:用来指定同一个文件夹下最多有几个日志文件时开始删除最旧的，创建新的(通过max属性) -->
+    <RollingFile name="BarLog" fileName="${LOG_PATH}/bar.log"
+                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/bar-%d{yyyy-MM-dd}-%i.log">
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+        <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+        </Policies>
+    </RollingFile>      
+           
+  </Appenders>
+  <Loggers>
+  
+    <Logger name="com.xp.art.log4j2.bar" level="info">
+      <AppenderRef ref="RollingFileInfo"/>
+      <AppenderRef ref="RollingFileWarn"/>
+      <AppenderRef ref="RollingFileError"/>
+      <AppenderRef ref="BarLog"/>
+    </Logger>
+    
+    <Logger name="com.xp.art.log4j2.foo" level="info">
+      <AppenderRef ref="RollingFileInfo"/>
+      <AppenderRef ref="RollingFileWarn"/>
+      <AppenderRef ref="RollingFileError"/>
+      <AppenderRef ref="FooLog"/>
+    </Logger>    
+      
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
